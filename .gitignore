@@ -396,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Unity generated folders
+[Ll]ibrary/
+[Uu]ser[Ss]ettings/
+[Pp]roject[Ss]ettings/
+[Aa]ssets/
