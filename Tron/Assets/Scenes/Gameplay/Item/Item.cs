@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class Item : MonoBehaviour
@@ -6,7 +5,8 @@ public class Item : MonoBehaviour
     public BoxCollider2D GridArea;
 
     private void Start() {
-        RandomizePosition();
+        // Load the saved state if it exists
+        ItemStateManager.LoadState(this.transform, GridArea);
     }
 
     private void RandomizePosition()
@@ -23,6 +23,7 @@ public class Item : MonoBehaviour
     {
         if (other.tag == "Player"){
             RandomizePosition();
+            ItemStateManager.SaveState(this.transform);
         }
     }
 }
