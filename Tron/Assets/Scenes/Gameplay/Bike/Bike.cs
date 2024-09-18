@@ -7,17 +7,17 @@ public class Bike : MonoBehaviour
 {
     public event Action<Vector2, Vector2> OnPositionChanged;
 
-
     private Vector2 _direction = Vector2.right;
     private List<Transform> _trail;
     private GridArea _gridArea;  // Reference to the GridArea component
     public Transform trailPrefab;
-    public int initialTrailLength = 4;  // Starting length of the trail
+    public int initialTrailLength = 3;  // Starting length of the trail set to 3
 
     private Vector2 _previousPosition;
     public float TotalDistanceMoved { get; private set; } = 0f;
 
     public bool IsOutOfFuel { get; set; } = false;
+    
 
     private void Start()
     {
@@ -32,14 +32,18 @@ public class Bike : MonoBehaviour
             return;
         }
 
-        // Load the saved state if it exists
-        BikeStateManager.LoadState(this.transform, ref _direction, _trail, trailPrefab, initialTrailLength);
-
         // Initialize previous position
         _previousPosition = new Vector2(
             Mathf.Round(this.transform.position.x),
             Mathf.Round(this.transform.position.y)
         );
+
+        // Initialize the trail with the starting length
+        for (int i = 0; i < initialTrailLength; i++)
+        {
+            Grow();
+        }
+
     }
 
     private void Update()
@@ -47,7 +51,7 @@ public class Bike : MonoBehaviour
         if (IsOutOfFuel)
         {
             ResetState();
-            SceneManager.LoadScene(4);
+            SceneManager.LoadScene(3);
         }
 
         if (Input.GetKeyDown(KeyCode.W) && _direction != Vector2.down)
@@ -132,7 +136,7 @@ public class Bike : MonoBehaviour
 
         this.transform.position = Vector3.zero;
 
-        // Reinitialize the trail with the starting length plus one
+        // Reinitialize the trail with the starting length
         for (int i = 0; i < initialTrailLength; i++)
         {
             Grow();
@@ -155,7 +159,7 @@ public class Bike : MonoBehaviour
         else if (other.CompareTag("Obstacle"))
         {
             ResetState();
-            SceneManager.LoadScene(4);
+            SceneManager.LoadScene(3);
         }
     }
 }

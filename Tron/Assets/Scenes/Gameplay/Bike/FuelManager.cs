@@ -13,6 +13,9 @@ public class FuelManager : MonoBehaviour
 
     private void Start()
     {
+        // Cargar el estado del combustible
+        LoadFuel();
+
         // Find the Bike component
         _bike = FindObjectOfType<Bike>();
         if (_bike != null)
@@ -74,5 +77,17 @@ public class FuelManager : MonoBehaviour
         {
             FuelText.text = "Current Fuel = " + fuel + "%";
         }
+    }
+
+    public void SaveFuel()
+    {
+        PlayerPrefs.SetFloat("Fuel_Amount", fuel);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadFuel()
+    {
+        fuel = PlayerPrefs.GetFloat("Fuel_Amount", 100.0f); // Valor predeterminado de 100.0f si no se encuentra
+        UpdateUI();
     }
 }

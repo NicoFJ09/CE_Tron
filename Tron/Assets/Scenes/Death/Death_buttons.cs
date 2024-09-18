@@ -3,14 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class Death : MonoBehaviour
 {
-
-    public void MainMenu_death()
+    public int MainMenuSceneIndex = 0;
+    public int GamePlaySceneIndex = 1;
+    public void MainMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(MainMenuSceneIndex);
     }
 
-    public void Restart_death()
+    public void Restart()
     {
-        SceneManager.LoadScene(1);
+        PlayerPrefs.DeleteAll();
+        SceneManager.LoadScene(GamePlaySceneIndex);
     }
 }

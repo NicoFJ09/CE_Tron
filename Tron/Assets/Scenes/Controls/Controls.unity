@@ -285,11 +285,8 @@ MonoBehaviour:
   m_text: 'MOVIMIENTO: Arriba (w) / Izquierda (a) / Abajo (s) / derecha (d)
 
 
-    HABILIDADES:
-    H / J / K / L
-
-
-    PAUSA: P'
+    ITEMS:
+    Cambiar orden de prioridad (k) / Seleccionar poder (l)'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -418,6 +415,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee36b40c7842436429ae6a64f2f8b8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainMenuSceneIndex: 0
+  PauseSceneIndex: 3
 --- !u!1 &915961752
 GameObject:
   m_ObjectHideFlags: 0
@@ -848,7 +847,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 747655915}
         m_TargetAssemblyTypeName: Controls, Assembly-CSharp
-        m_MethodName: OnButtonClick
+        m_MethodName: Return_Scene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
