@@ -48,16 +48,6 @@ public class LinkedList
         }
     }
 
-    // Method to print all positions in the linked list
-    public void PrintAllNodes()
-    {
-        Node current = head;
-        while (current != null)
-        {
-            Debug.Log($"Position: {current.position}, Color: {current.color}");
-            current = current.next;
-        }
-    }
 }
 
 
