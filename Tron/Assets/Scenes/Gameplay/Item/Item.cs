@@ -1,11 +1,53 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-
+using System;
 public class Item : MonoBehaviour
 {
     public BoxCollider2D GridArea;
     [SerializeField] private ItemInventoryUI itemInventoryUI;
     [SerializeField] private PowerInventoryUI powerInventoryUI;
+
+    public static event Action<string> OnObjectUsed;
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Restablecer las pilas cuando se carga una nueva escena
+        Inventory.Instance.Reset();
+        itemInventoryUI.RefreshInventory(Inventory.Instance);
+        powerInventoryUI.RefreshInventory(Inventory.Instance);
+    }
+
+    private void Update()
+    {
+        // Verificar si se presiona la tecla L
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Objects poppedPower = Inventory.Instance.PopPower();
+            if (poppedPower != null)
+            {
+                Debug.Log($"Popped power: {poppedPower.GetPowerType()}");
+                OnObjectUsed?.Invoke($"{poppedPower}");
+            }
+            powerInventoryUI.RefreshInventory(Inventory.Instance);
+
+        }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            Inventory.Instance.ShufflePowerStack();
+            powerInventoryUI.RefreshInventory(Inventory.Instance);
+        }
+    }
 
     private void Start()
     {
@@ -42,8 +84,8 @@ public class Item : MonoBehaviour
 
         do
         {
-            float x = Random.Range(bounds.min.x, bounds.max.x);
-            float y = Random.Range(bounds.min.y, bounds.max.y);
+            float x = UnityEngine.Random.Range(bounds.min.x, bounds.max.x);
+            float y = UnityEngine.Random.Range(bounds.min.y, bounds.max.y);
             position = new Vector3(Mathf.Round(x), Mathf.Round(y), 0.0f);
         } while (occupiedPositions.Contains(position));
 
@@ -90,6 +132,7 @@ public class Item : MonoBehaviour
                         Inventory.Instance.DequeueItem();
                         itemInventoryUI.RefreshInventory(Inventory.Instance);
                         Debug.Log("Fuel item dequeued after 1 second.");
+                        OnObjectUsed?.Invoke("Fuel");
                     }, 1.5f);
                 }
                 if (itemName.Contains("Growth"))
@@ -100,6 +143,7 @@ public class Item : MonoBehaviour
                         Inventory.Instance.DequeueItem();
                         itemInventoryUI.RefreshInventory(Inventory.Instance);
                         Debug.Log("Growth item dequeued after 1 second.");
+                        OnObjectUsed?.Invoke("Growth");
                     }, 1.5f);
                 }
                 if (itemName.Contains("Bomb"))
@@ -110,6 +154,7 @@ public class Item : MonoBehaviour
                         Inventory.Instance.DequeueItem();
                         itemInventoryUI.RefreshInventory(Inventory.Instance);
                         Debug.Log("Bomb item dequeued after 1 second.");
+                        OnObjectUsed?.Invoke("Bomb");
                     }, 1.5f);
                 }
                 if (itemName.Contains("Shield"))
@@ -130,17 +175,4 @@ public class Item : MonoBehaviour
     }
 
 
-    private void Update()
-    {
-        // Verificar si se presiona la tecla L
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Objects poppedPower = Inventory.Instance.PopPower();
-            if (poppedPower != null)
-            {
-                Debug.Log($"Popped power: {poppedPower.GetPowerType()}");
-            }
-            powerInventoryUI.RefreshInventory(Inventory.Instance);
-        }
-    }
 }
