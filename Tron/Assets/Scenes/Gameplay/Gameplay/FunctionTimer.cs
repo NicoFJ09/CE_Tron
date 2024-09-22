@@ -40,7 +40,7 @@ public class FunctionTimer{
         }
     }
 
-    private void DestroySelf() {
+    public void DestroySelf() {
         isDestroyed = true;
         UnityEngine.Object.Destroy(gameObject);
     }

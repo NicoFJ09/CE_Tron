@@ -13,7 +13,9 @@ public class Inventory
     private const int MaxItems = 3; // Máximo de elementos en la cola
     private const int MaxPowers = 3; // Máximo de elementos en la pila
     private bool canPopPower = true;
-    private const float popPowerCooldown = 0.5f; // Cooldown en segundos
+    private bool canShufflePower = true;
+    private float popPowerCooldown = 0.5f; // Tiempo de espera entre llamadas a PopPower
+    private float shufflePowerCooldown = 0.5f; // Tiempo de espera entre llamadas a ShufflePowerStack
 
     // Constructor privado para evitar instanciación directa
     private Inventory()
@@ -52,8 +54,16 @@ public class Inventory
 
     public Objects DequeueItem()
     {
-        return itemQueue.Dequeue();
+        if (itemQueue.Count > 0)
+        {
+            return itemQueue.Dequeue();
+        }
+        else
+        {
+            return null; // Ignorar y pasar si la cola está vacía
+        }
     }
+
 
     // Métodos para manipular la pila de poderes
     public void PushPower(Objects power)
@@ -94,6 +104,46 @@ public class Inventory
         }
 
         return null;
+    }
+
+    public void ShufflePowerStack()
+    {
+        if (!canShufflePower)
+        {
+            return;
+        }
+
+        if (powerStack.Count > 1)
+        {
+            // Convertir la pila en una lista para facilitar la manipulación
+            List<Objects> powerList = new List<Objects>(powerStack);
+
+            // Eliminar el último elemento y añadirlo al principio
+            Objects lastPower = powerList[powerList.Count - 1];
+            powerList.RemoveAt(powerList.Count - 1);
+            powerList.Insert(0, lastPower);
+
+            // Limpiar la pila original y volver a llenarla con los elementos reorganizados
+            powerStack.Clear();
+            for (int i = powerList.Count - 1; i >= 0; i--)
+            {
+                powerStack.Push(powerList[i]);
+            }
+
+            Debug.Log("Pila de poderes reorganizada: " + string.Join(", ", powerStack));
+        }
+
+        // Iniciar el temporizador para evitar llamadas repetidas
+        canShufflePower = false;
+        FunctionTimer.Create(() => {
+            canShufflePower = true;
+        }, shufflePowerCooldown);
+    }
+
+    public void Reset()
+    {
+        itemQueue.Clear();
+        powerStack.Clear();
     }
     // Métodos para obtener la cola de items y la pila de poderes
     public IEnumerable<Objects> GetItemQueue()

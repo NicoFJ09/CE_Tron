@@ -90,4 +90,12 @@ public class FuelManager : MonoBehaviour
         fuel = PlayerPrefs.GetFloat("Fuel_Amount", 100.0f); // Valor predeterminado de 100.0f si no se encuentra
         UpdateUI();
     }
+
+    public void AddRandomFuel()
+    {
+        int randomFuel = UnityEngine.Random.Range(1, 50); // Genera un número aleatorio entre 1 y 30
+        fuel = Mathf.Min(fuel + randomFuel, 100.0f); // Añade el combustible y asegura que no exceda el máximo de 100
+        Debug.Log("Fuel replenished: " + randomFuel + ". Current fuel: " + fuel);
+        UpdateUI(); // Actualiza la interfaz de usuario
+    }
 }
