@@ -10,14 +10,14 @@ public class Bike : MonoBehaviour
     private SpriteRenderer bikeSpriteRenderer;
 
 
-    private Vector2 _direction = Vector2.right;
-    private List<Transform> _trail;
-    private GridArea _gridArea;  // Reference to the GridArea component
+    protected Vector2 _direction;
+    protected List<Transform> _trail;
+    protected GridArea _gridArea;  // Reference to the GridArea component
     public Transform trailPrefab;
     public int initialTrailLength = 3;  // Starting length of the trail set to 3
 
 
-    private Vector2 _previousPosition;
+    protected Vector2 _previousPosition;
     public float TotalDistanceMoved { get; private set; } = 0f;
 
 
@@ -29,8 +29,8 @@ public class Bike : MonoBehaviour
 
     public Active_Bomb bombPrefab;
     public bool IsShielded { get; set; } = false;
-    private CustomFixedTimer customFixedTimer;
-    private float variableinterval = 0.08f;
+    protected CustomFixedTimer customFixedTimer;
+    protected float variableinterval = 0.08f;
 
 
     private void OnEnable()
@@ -47,6 +47,7 @@ public class Bike : MonoBehaviour
 
     private void Start()
     {
+        _direction = Vector2.down;
         _trail = new List<Transform>();
         _trail.Add(this.transform);
 
@@ -65,7 +66,6 @@ public class Bike : MonoBehaviour
         }
         if (bikeSpriteRenderer != null)
         {
-            Debug.Log("Current Bike Color: " + bikeSpriteRenderer.color);
         }
 
         // Initialize previous position
@@ -117,7 +117,7 @@ public class Bike : MonoBehaviour
     }
 
 
-    private void CustomFixedUpdate()
+    protected virtual void CustomFixedUpdate()
         
     {
         SetCustomUpdateInterval(variableinterval);
@@ -174,7 +174,7 @@ public class Bike : MonoBehaviour
         _previousPosition = adjustedPosition;
     }
 
-    public void SetCustomUpdateInterval(float newInterval)
+    protected virtual void SetCustomUpdateInterval(float newInterval)
     {
         if (customFixedTimer != null)
         {
@@ -183,7 +183,7 @@ public class Bike : MonoBehaviour
     }
 
 
-    private void Grow(int amount)
+    protected virtual void Grow(int amount)
     {
         for (int i = 0; i < amount; i++)
         {
@@ -193,7 +193,7 @@ public class Bike : MonoBehaviour
         }
     }
    
-    private void ResetState()
+    protected void ResetState()
     {
         for (int i = 1; i < _trail.Count; i++)
         {
@@ -221,7 +221,6 @@ public class Bike : MonoBehaviour
 
     private void HandleItemUsed(string itemName)
     {
-        Debug.Log("Item used: " + itemName);
         // Aquí puedes agregar la lógica para manejar el uso del ítem en la clase Bike
         if (itemName == "Fuel")
         {
@@ -251,7 +250,6 @@ public class Bike : MonoBehaviour
             float randomTime = UnityEngine.Random.Range(1f, 11f);
             IsShielded = true;
             bikeSpriteRenderer.color = new Color(0.118f, 0.565f, 1.000f, 1.000f);
-            Debug.Log("Shield activated for " + randomTime + " seconds.");
             FunctionTimer.Create(() => {
                 IsShielded = false;
                 bikeSpriteRenderer.color = new Color(0.957f, 0.686f, 0.176f, 1.000f);
@@ -263,7 +261,6 @@ public class Bike : MonoBehaviour
             variableinterval = UnityEngine.Random.Range(2, 8); 
             variableinterval = variableinterval / 100f; // Asegurarse de que la división sea con un float
             bikeSpriteRenderer.color = new Color(1.000f, 1.000f, 1.000f, 1.000f);
-            Debug.Log("Speed activated for " + randomTime + " seconds at a rate of " + variableinterval); // Añadido espacio
             FunctionTimer.Create(() => {
                 variableinterval = 0.08f;
                 bikeSpriteRenderer.color = new Color(0.957f, 0.686f, 0.176f, 1.000f);
@@ -280,6 +277,15 @@ private void OnTriggerEnter2D(Collider2D other)
         SceneManager.LoadScene(3);
     }
     else if (other.CompareTag("Obstacle") && !IsShielded){
+        ResetState();
+        SceneManager.LoadScene(3);
+    }
+    else if (other.CompareTag("Bot") && !IsShielded){
+        ResetState();
+        SceneManager.LoadScene(3);
+    }
+    else if (other.CompareTag("Trail") && !IsShielded)
+    {
         ResetState();
         SceneManager.LoadScene(3);
     }
