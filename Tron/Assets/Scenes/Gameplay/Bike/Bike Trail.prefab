@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1796195120444163279}
   m_Layer: 0
   m_Name: Bike Trail
-  m_TagString: Obstacle
+  m_TagString: Trail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -9,6 +9,7 @@ public class Item : MonoBehaviour
     [SerializeField] private PowerInventoryUI powerInventoryUI;
 
     public static event Action<string> OnObjectUsed;
+    public static event Action<string> OnBotObjectUsed;
 
     private void OnEnable()
     {
@@ -30,22 +31,19 @@ public class Item : MonoBehaviour
 
     private void Update()
     {
-        // Verificar si se presiona la tecla L
         if (Input.GetKeyDown(KeyCode.L))
         {
-            Objects poppedPower = Inventory.Instance.PopPower();
-            if (poppedPower != null)
-            {
-                Debug.Log($"Popped power: {poppedPower.GetPowerType()}");
-                OnObjectUsed?.Invoke($"{poppedPower}");
-            }
-            powerInventoryUI.RefreshInventory(Inventory.Instance);
-
+        Objects poppedPower = Inventory.Instance.PopPower();
+        if (poppedPower != null)
+        {
+            OnObjectUsed?.Invoke($"{poppedPower}");
+        }
+        powerInventoryUI.RefreshInventory(Inventory.Instance);
         }
         else if (Input.GetKeyDown(KeyCode.K))
         {
-            Inventory.Instance.ShufflePowerStack();
-            powerInventoryUI.RefreshInventory(Inventory.Instance);
+        Inventory.Instance.ShufflePowerStack();
+        powerInventoryUI.RefreshInventory(Inventory.Instance);
         }
     }
 
@@ -126,45 +124,37 @@ public class Item : MonoBehaviour
                 // Verificar condiciones basadas en el nombre del ítem
                 if (itemName.Contains("Fuel"))
                 {
-                    Debug.Log("You picked up fuel!");
                     Inventory.Instance.EnqueueItem(new Objects(Objects.ItemType.Fuel));
                     FunctionTimer.Create(() => {
                         Inventory.Instance.DequeueItem();
                         itemInventoryUI.RefreshInventory(Inventory.Instance);
-                        Debug.Log("Fuel item dequeued after 1 second.");
                         OnObjectUsed?.Invoke("Fuel");
                     }, 1.5f);
                 }
                 if (itemName.Contains("Growth"))
                 {
-                    Debug.Log("You picked up a growth item!");
                     Inventory.Instance.EnqueueItem(new Objects(Objects.ItemType.Growth));
                     FunctionTimer.Create(() => {
                         Inventory.Instance.DequeueItem();
                         itemInventoryUI.RefreshInventory(Inventory.Instance);
-                        Debug.Log("Growth item dequeued after 1 second.");
                         OnObjectUsed?.Invoke("Growth");
                     }, 1.5f);
                 }
                 if (itemName.Contains("Bomb"))
                 {
-                    Debug.Log("You picked up a bomb!");
                     Inventory.Instance.EnqueueItem(new Objects(Objects.ItemType.Bomb));
                     FunctionTimer.Create(() => {
                         Inventory.Instance.DequeueItem();
                         itemInventoryUI.RefreshInventory(Inventory.Instance);
-                        Debug.Log("Bomb item dequeued after 1 second.");
                         OnObjectUsed?.Invoke("Bomb");
                     }, 1.5f);
                 }
                 if (itemName.Contains("Shield"))
                 {
-                    Debug.Log("You picked up a shield!");
                     Inventory.Instance.PushPower(new Objects(Objects.PowerType.Shield));
                 }
                 if (itemName.Contains("Speed"))
                 {
-                    Debug.Log("You picked up a speed item!");
                     Inventory.Instance.PushPower(new Objects(Objects.PowerType.Speed));
                 }
                 // Actualizar la UI
@@ -172,7 +162,41 @@ public class Item : MonoBehaviour
                 powerInventoryUI.RefreshInventory(Inventory.Instance);
             }
         }
-    }
+        if (other.tag == "Bot")
+        {
+            ItemManager itemManager = FindObjectOfType<ItemManager>();
+            if (itemManager != null)
+            {
+                itemManager.ReplaceItem(this.gameObject);
+                string itemName = this.gameObject.name;
+                string botName = other.gameObject.name;
 
+                if(itemName.Contains("Fuel"))
+                {
+                    FunctionTimer.Create(() => {
+                        OnBotObjectUsed?.Invoke($"Fuel|{botName}");
+                    }, 1.5f);
+                }
+                if(itemName.Contains("Growth"))
+                {
+                    FunctionTimer.Create(() => {
+                        OnBotObjectUsed?.Invoke($"Growth|{botName}");
+                    }, 1.5f);
+                }
+                if(itemName.Contains("Bomb"))
+                {
+                    FunctionTimer.Create(() => {
+                        OnBotObjectUsed?.Invoke($"Bomb|{botName}");
+                    }, 1.5f);
+                }
+                if(itemName.Contains("Shield"))
+                {
+                    FunctionTimer.Create(() => {
+                        OnBotObjectUsed?.Invoke($"Shield|{botName}");
+                    }, 1.5f);
+                }
+            }
+        }
+    }
 
 }

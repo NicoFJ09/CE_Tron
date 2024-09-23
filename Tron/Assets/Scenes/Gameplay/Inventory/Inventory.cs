@@ -74,10 +74,6 @@ public class Inventory
             return; // Ignorar el nuevo poder
         }
         powerStack.Push(power);
-        Debug.Log("Cantidad de poderes en la pila: " + powerStack.Count);
-
-        // Imprimir el contenido de la pila de poderes en una sola línea
-        Debug.Log("Poderes en la pila: " + string.Join(", ", powerStack));
     }
 
     public Objects PopPower()
@@ -92,7 +88,6 @@ public class Inventory
         {
             Objects poppedPower = powerStack.Pop();
             int finalCount = powerStack.Count;
-            Debug.Log($"Power stack count reduced from {initialCount} to {finalCount}");
 
             // Iniciar el temporizador para evitar llamadas repetidas
             canPopPower = false;

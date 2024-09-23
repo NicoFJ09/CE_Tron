@@ -4,6 +4,24 @@ using UnityEngine;
 
 public class Active_Bomb : MonoBehaviour
 {
+    private BoxCollider2D bombCollider;
+
+    private void Start()
+    {
+        bombCollider = GetComponent<BoxCollider2D>();
+        if (bombCollider != null)
+        {
+            bombCollider.enabled = false; // Desactivar el collider inicialmente
+            FunctionTimer.Create(EnableCollider, 0.1f); // Activar el collider después de 0.5 segundos usando FunctionTimer
+        }
+    }
+
+    // Función para activar el collider
+    private void EnableCollider()
+    {
+        bombCollider.enabled = true;
+    }
+
     // Función para establecer la posición del objeto
     public void SetPosition(Vector2 position)
     {
