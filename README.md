@@ -1,2 +1,2 @@
 # CE_Tron
-Unity powered C# Tron inspired 2d game
+Unity based C# Tron inspired 2d game
